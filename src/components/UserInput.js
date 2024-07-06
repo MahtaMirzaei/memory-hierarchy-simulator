@@ -129,18 +129,13 @@ const UserInput = ({
           value={addressSize}
           onChange={(e) => setAddressSize(parseInt(e.target.value, 10))}
         >
-          <option value={2}>2</option>
-          <option value={4}>4</option>
-          <option value={8}>8</option>
-          <option value={16}>16</option>
-          <option value={32}>32</option>
-          <option value={64}>64</option>
-          <option value={128}>128</option>
-          <option value={256}>256</option>
           <option value={512}>512</option>
           <option value={1024}>1024</option>
           <option value={2048}>2048</option>
           <option value={4096}>4096</option>
+          <option value={8192}>8192</option>
+          <option value={16384}>16834</option>
+          <option value={32768}>32768</option>
         </select>
       </label>
       <button onClick={handleSimulate}>Simulate</button>
