@@ -6,6 +6,8 @@ import DiskStorage from "./components/DiskStorage";
 import PerformanceAnalysis from "./components/PerformanceAnalysis";
 import { LRU, FIFO, RandomPolicy, LFU } from "./utils/policies";
 import "./styles.css";
+import AddressSize from "./components/AddressSize";
+import BlockSize from "./components/BlockSize";
 
 const App = () => {
   const [memoryHierarchy, setMemoryHierarchy] = useState(null);
@@ -143,15 +145,19 @@ const App = () => {
           setAddressSize={setAddressSize}
           blockSize={blockSize}
           addressSize={addressSize}
-          />
-          {performance && <PerformanceAnalysis performance={performance} />}
+        />
+        {performance && <PerformanceAnalysis performance={performance} />}
       </div>
       {memoryHierarchy && (
         <>
-          <div className="m">
+          <div>
             <Cache memoryHierarchy={memoryHierarchy} />
-
-            
+            <div className="f"></div>
+            <div className="f"></div>
+            <div className="f"></div>
+            <div className="f"></div>
+            <AddressSize addressSize={addressSize} />
+            <BlockSize blockSize={blockSize} />
           </div>
           <div>
             <MainMemory memoryHierarchy={memoryHierarchy} />
@@ -159,15 +165,17 @@ const App = () => {
             <div>
               <h4>Enter Memory Addresses (comma-separated):</h4>
               <input
-              className="m"
+                className="m"
                 type="text"
                 value={currentAddress}
                 onChange={handleAddressInput}
               />
-              <button className="m" onClick={handleAddAddress}>Add Addresses</button>
+              <button onClick={handleAddAddress}>Add Addresses</button>
             </div>
             <div>
-              <button className="f" onClick={handleFinish}>Calculate Performance</button>
+              <button className="f" onClick={handleFinish}>
+                Calculate Performance
+              </button>
             </div>
             <div className="address-list">
               {addressResults.map((result, index) => (

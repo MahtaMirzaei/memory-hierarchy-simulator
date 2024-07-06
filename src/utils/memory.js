@@ -1,7 +1,13 @@
-import { LRU, FIFO, RandomPolicy, LFU, MRU, SecondChance, LFRU } from './policies';
+import { LRU, FIFO, RandomPolicy, LFU } from "./policies";
 
 export class MemoryHierarchy {
-  constructor({ cacheSizes, replacementPolicy, levels, blockSize, addressSize }) {
+  constructor({
+    cacheSizes,
+    replacementPolicy,
+    levels,
+    blockSize,
+    addressSize,
+  }) {
     this.cacheSizes = cacheSizes;
     this.replacementPolicy = replacementPolicy;
     this.levels = levels;
@@ -19,17 +25,20 @@ export class MemoryHierarchy {
     for (let i = 0; i < levels; i++) {
       let cache;
       switch (policy) {
-        case 'LRU':
+        case "LRU":
           cache = new LRU(sizes[i]);
           break;
-        case 'FIFO':
+        case "FIFO":
           cache = new FIFO(sizes[i]);
           break;
-        case 'Random':
+        case "Random":
           cache = new RandomPolicy(sizes[i]);
           break;
+        case "LFU":
+          cache = new LFU(sizes[i]);
+          break;
         default:
-          throw new Error('Unknown replacement policy');
+          throw new Error("Unknown replacement policy");
       }
       caches.push(cache);
     }
@@ -67,7 +76,7 @@ export class MemoryHierarchy {
       const hitRate = this.caches[i].hitRate;
       const accessTime = this.caches[i].accessTime;
       amat += previousHitRate * hitRate * accessTime;
-      previousHitRate *= (1 - hitRate);
+      previousHitRate *= 1 - hitRate;
     }
     // Add main memory access time
     amat += previousHitRate * this.mainMemory.accessTime;
