@@ -17,12 +17,14 @@ const App = () => {
   const [addressResults, setAddressResults] = useState([]);
   const [blockSize, setBlockSize] = useState(8); // Default block size
   const [addressSize, setAddressSize] = useState(1024); // Default address size
+  const [levelHitRates, setLevelHitRates] = useState([]); // State to store hit rates of each level
 
   const handleSimulate = (hierarchy) => {
     setMemoryHierarchy(hierarchy);
     setAddresses([]);
     setPerformance(null);
     setAddressResults([]);
+    setLevelHitRates([]);
   };
 
   const handleAddressInput = (e) => {
@@ -70,6 +72,8 @@ const App = () => {
 
     let hits = 0;
     let results = [];
+    let levelHits = Array(cacheLevels.length).fill(0); // Array to store hits per level
+    let levelAccesses = Array(cacheLevels.length).fill(0); // Array to store accesses per level
 
     addresses.forEach((address) => {
       let hit = false;
@@ -94,6 +98,7 @@ const App = () => {
       if (hit) {
         hits++;
         results.push({ address, status: "hit", level: hitLevel });
+        levelHits[hitLevel]++;
       } else {
         results.push({ address, status: "miss", level: -1 });
 
@@ -105,6 +110,11 @@ const App = () => {
           cacheInstance.addBlock(blockStart, blockEnd);
         }
       }
+
+      // Increment accesses for all levels up to the one accessed
+      for (let i = 0; i <= (hit ? hitLevel : cacheInstances.length - 1); i++) {
+        levelAccesses[i]++;
+      }
     });
 
     const totalAccesses = addresses.length;
@@ -112,21 +122,30 @@ const App = () => {
     const hitRate = (hits / totalAccesses) * 100;
     const missRate = (misses / totalAccesses) * 100;
 
-    // Correct AMAT calculation
     let amat = 0;
-    for (let i = 0; i < cacheLevels.length; i++) {
-      const levelHits = results.filter((result) => result.level === i).length;
-      const levelMisses = results.filter((result) => result.level < i).length;
+    let formerAmat = 0;
+
+    for (let i = cacheLevels.length - 1; i >= 0; i--) {
+      const levelHitCount = levelHits[i];
       const hitTime = cacheLevels[i].hitTime;
+      const levelMisses = levelAccesses[i] - levelHitCount;
       const missPenalty =
         i === cacheLevels.length - 1
           ? cacheLevels[i].missPenalty
-          : cacheLevels[i].missPenalty + cacheLevels[i + 1].hitTime;
+          :formerAmat;
 
-      amat +=
-        (levelHits / totalAccesses) * hitTime +
-        (levelMisses / totalAccesses) * missPenalty;
+      const missRate = levelMisses / levelAccesses[i];
+
+      // Update AMAT
+      amat = hitTime + missRate * missPenalty;
+      formerAmat = amat;
     }
+
+    // Calculate hit rates for each level
+    const hitRates = levelHits.map((hits, i) => ({
+      level: i + 1,
+      hitRate: (hits / levelAccesses[i]) * 100,
+    }));
 
     setPerformance({
       hitRate,
@@ -134,6 +153,7 @@ const App = () => {
       amat,
     });
     setAddressResults(results);
+    setLevelHitRates(hitRates); // Update state with hit rates
   };
 
   return (
@@ -152,12 +172,19 @@ const App = () => {
         <>
           <div>
             <Cache memoryHierarchy={memoryHierarchy} />
-            <div className="f"></div>
-            <div className="f"></div>
-            <div className="f"></div>
-            <div className="f"></div>
+
             <AddressSize addressSize={addressSize} />
             <BlockSize blockSize={blockSize} />
+            {levelHitRates.length > 0 && (
+              <div>
+                <h4>Cache Level Hit Rates:</h4>
+                {levelHitRates.map((rate, index) => (
+                  <div key={index}>
+                    Level {rate.level}: {rate.hitRate.toFixed(2)}%
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
           <div>
             <MainMemory memoryHierarchy={memoryHierarchy} />
