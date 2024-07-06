@@ -4,7 +4,7 @@ import Cache from "./components/Cache";
 import MainMemory from "./components/MainMemory";
 import DiskStorage from "./components/DiskStorage";
 import PerformanceAnalysis from "./components/PerformanceAnalysis";
-import { LRU, FIFO, RandomPolicy, LFU } from "./utils/policies";
+import { LRU, FIFO, RandomPolicy, LFU, RAM } from "./utils/policies";
 import "./styles.css";
 import AddressSize from "./components/AddressSize";
 import BlockSize from "./components/BlockSize";
@@ -18,6 +18,8 @@ const App = () => {
   const [blockSize, setBlockSize] = useState(8); // Default block size
   const [addressSize, setAddressSize] = useState(4096); // Default address size
   const [levelHitRates, setLevelHitRates] = useState([]); // State to store hit rates of each level
+  const [mainMemorySize, setMainMemorySize] = useState(8192); // Default main memory size
+  const [diskStorageSize, setDiskStorageSize] = useState(16384); // Default disk storage size
 
   const handleSimulate = (hierarchy) => {
     setMemoryHierarchy(hierarchy);
@@ -70,10 +72,11 @@ const App = () => {
       }
     }
 
+    const ram = new RAM(mainMemorySize);
     let hits = 0;
     let results = [];
-    let levelHits = Array(cacheLevels.length).fill(0); // Array to store hits per level
-    let levelAccesses = Array(cacheLevels.length).fill(0); // Array to store accesses per level
+    let levelHits = Array(cacheLevels.length + 2).fill(0); // Array to store hits per level
+    let levelAccesses = Array(cacheLevels.length + 2).fill(0); // Array to store accesses per level
 
     addresses.forEach((address) => {
       let hit = false;
@@ -100,8 +103,16 @@ const App = () => {
         results.push({ address, status: "hit", level: hitLevel });
         levelHits[hitLevel]++;
       } else {
-        results.push({ address, status: "miss", level: -1 });
-
+        let hitInRam = ram.access(address);
+        if (hitInRam) {
+          hits++;
+          results.push({ address, status: "hit(RAM)" });
+          levelHits[cacheLevels.length]++; // RAM is the next level after cache
+          hitLevel = cacheLevels.length;
+        } else {
+          results.push({ address, status: "miss", level: "Disk" });
+          levelHits[cacheLevels.length + 1]++; // Disk is the next level after RAM
+        }
         for (let i = 0; i < cacheInstances.length; i++) {
           const cacheInstance = cacheInstances[i];
           const blockStart = Math.floor(address / blockSize) * blockSize;
@@ -109,10 +120,11 @@ const App = () => {
 
           cacheInstance.addBlock(blockStart, blockEnd);
         }
+        ram.addBlock(address, address); // Add to RAM
       }
 
       // Increment accesses for all levels up to the one accessed
-      for (let i = 0; i <= (hit ? hitLevel : cacheInstances.length - 1); i++) {
+      for (let i = 0; i <= (hit ? hitLevel : cacheInstances.length + 1); i++) {
         levelAccesses[i]++;
       }
     });
@@ -131,8 +143,8 @@ const App = () => {
       const levelMisses = levelAccesses[i] - levelHitCount;
       const missPenalty =
         i === cacheLevels.length - 1
-          ? cacheLevels[i].missPenalty
-          :formerAmat;
+          ? memoryHierarchy.mainMemory.accessTime
+          : formerAmat;
 
       const missRate = levelMisses / levelAccesses[i];
 
@@ -140,6 +152,9 @@ const App = () => {
       amat = hitTime + missRate * missPenalty;
       formerAmat = amat;
     }
+
+    const ramMissRate = (levelAccesses[cacheLevels.length] - levelHits[cacheLevels.length]) / levelAccesses[cacheLevels.length];
+    amat = amat + (ramMissRate * memoryHierarchy.diskStorage.accessTime);
 
     // Calculate hit rates for each level
     const hitRates = levelHits.map((hits, i) => ({
@@ -187,8 +202,8 @@ const App = () => {
             )}
           </div>
           <div>
-            <MainMemory memoryHierarchy={memoryHierarchy} />
-            <DiskStorage memoryHierarchy={memoryHierarchy} />
+            <MainMemory mainMemorySize={mainMemorySize} />
+            <DiskStorage diskStorageSize={diskStorageSize} />
             <div>
               <h4>Enter Memory Addresses (comma-separated):</h4>
               <input

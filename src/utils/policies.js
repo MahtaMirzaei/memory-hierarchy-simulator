@@ -1,4 +1,4 @@
-class LRU {
+export class LRU {
   constructor(size) {
     this.size = size;
     this.cache = new Map();
@@ -6,83 +6,71 @@ class LRU {
 
   access(address) {
     if (this.cache.has(address)) {
-      const value = this.cache.get(address);
       this.cache.delete(address);
-      this.cache.set(address, value);
+      this.cache.set(address, true);
       return true;
     }
-
-    if (this.cache.size >= this.size) {
-      const oldestKey = this.cache.keys().next().value;
-      this.cache.delete(oldestKey);
-    }
-
-    this.cache.set(address, address);
     return false;
   }
 
   addBlock(start, end) {
-    for (let address = start; address <= end; address++) {
-      this.access(address);
+    for (let addr = start; addr <= end; addr++) {
+      if (this.cache.size >= this.size) {
+        const firstKey = this.cache.keys().next().value;
+        this.cache.delete(firstKey);
+      }
+      this.cache.set(addr, true);
     }
   }
 }
 
-class FIFO {
+export class FIFO {
   constructor(size) {
     this.size = size;
-    this.cache = [];
+    this.queue = [];
   }
 
   access(address) {
-    const index = this.cache.indexOf(address);
-    if (index !== -1) {
+    if (this.queue.includes(address)) {
       return true;
     }
-
-    if (this.cache.length >= this.size) {
-      this.cache.shift();
-    }
-
-    this.cache.push(address);
     return false;
   }
 
   addBlock(start, end) {
-    for (let address = start; address <= end; address++) {
-      this.access(address);
+    for (let addr = start; addr <= end; addr++) {
+      if (this.queue.length >= this.size) {
+        this.queue.shift();
+      }
+      this.queue.push(addr);
     }
   }
 }
 
-class RandomPolicy {
+export class RandomPolicy {
   constructor(size) {
     this.size = size;
     this.cache = new Set();
   }
 
   access(address) {
-    if (this.cache.has(address)) {
-      return true;
-    }
-
-    if (this.cache.size >= this.size) {
-      const keys = Array.from(this.cache);
-      const randomKey = keys[Math.floor(Math.random() * keys.length)];
-      this.cache.delete(randomKey);
-    }
-
-    this.cache.add(address);
-    return false;
+    return this.cache.has(address);
   }
 
   addBlock(start, end) {
-    for (let address = start; address <= end; address++) {
-      this.access(address);
+    for (let addr = start; addr <= end; addr++) {
+      if (this.cache.size >= this.size) {
+        const randomAddress = Array.from(this.cache)[
+          Math.floor(Math.random() * this.cache.size)
+        ];
+        this.cache.delete(randomAddress);
+      }
+      this.cache.add(addr);
     }
   }
 }
-class LFU {
+
+export class LFU {
   constructor(size) {
     this.size = size;
     this.cache = new Map();
@@ -94,30 +82,47 @@ class LFU {
       this.usageCount.set(address, this.usageCount.get(address) + 1);
       return true;
     }
-
-    if (this.cache.size >= this.size) {
-      let leastUsed = null;
-      let minCount = Infinity;
-      for (const [key, count] of this.usageCount.entries()) {
-        if (count < minCount) {
-          minCount = count;
-          leastUsed = key;
-        }
-      }
-      this.cache.delete(leastUsed);
-      this.usageCount.delete(leastUsed);
-    }
-
-    this.cache.set(address, true);
-    this.usageCount.set(address, 1);
     return false;
   }
 
-  addBlock(blockStart, blockEnd) {
-    for (let addr = blockStart; addr <= blockEnd; addr++) {
-      this.access(addr);
+  addBlock(start, end) {
+    for (let addr = start; addr <= end; addr++) {
+      if (this.cache.size >= this.size) {
+        let lfuKey = null;
+        let minCount = Infinity;
+        for (let [key, count] of this.usageCount.entries()) {
+          if (count < minCount) {
+            minCount = count;
+            lfuKey = key;
+          }
+        }
+        if (lfuKey !== null) {
+          this.cache.delete(lfuKey);
+          this.usageCount.delete(lfuKey);
+        }
+      }
+      this.cache.set(addr, true);
+      this.usageCount.set(addr, 1);
     }
   }
 }
 
-export { LRU, FIFO, RandomPolicy, LFU };
+export class RAM {
+  constructor(size) {
+    this.size = size;
+    this.cache = new Set();
+  }
+
+  access(address) {
+    return this.cache.has(address);
+  }
+
+  addBlock(start, end) {
+    for (let addr = start; addr <= end; addr++) {
+      if (this.cache.size >= this.size) {
+        this.cache.delete(this.cache.keys().next().value);
+      }
+      this.cache.add(addr);
+    }
+  }
+}
