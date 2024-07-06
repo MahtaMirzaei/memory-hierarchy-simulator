@@ -60,26 +60,4 @@ export class MemoryHierarchy {
     }
   }
 
-  getPerformanceMetrics() {
-    const totalAccesses = this.hits + this.misses;
-    const hitRate = (this.hits / totalAccesses) * 100;
-    const missRate = (this.misses / totalAccesses) * 100;
-    const amat = this.calculateAMAT();
-    return { hitRate, missRate, amat };
-  }
-
-  calculateAMAT() {
-    // Calculate Average Memory Access Time (AMAT)
-    let amat = 0;
-    let previousHitRate = 1;
-    for (let i = 0; i < this.caches.length; i++) {
-      const hitRate = this.caches[i].hitRate;
-      const accessTime = this.caches[i].accessTime;
-      amat += previousHitRate * hitRate * accessTime;
-      previousHitRate *= 1 - hitRate;
-    }
-    // Add main memory access time
-    amat += previousHitRate * this.mainMemory.accessTime;
-    return amat;
-  }
 }
