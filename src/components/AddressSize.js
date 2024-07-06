@@ -3,8 +3,7 @@ import React from 'react';
 const AddressSize = ({ addressSize }) => {
   return (
     <div>
-      <h2>More Data</h2>
-      <p>Addresss Size: {addressSize}</p>
+      <h3>Addresss Size: {addressSize}</h3>
     </div>
   );
 };

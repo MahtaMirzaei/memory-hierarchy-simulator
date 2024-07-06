@@ -14,8 +14,8 @@ export class MemoryHierarchy {
     this.blockSize = blockSize;
     this.addressSize = addressSize;
     this.caches = this.createCaches(levels, cacheSizes, replacementPolicy);
-    this.mainMemory = { size: 65536 }; // Example size in KB
-    this.diskStorage = { size: 1024 }; // Example size in GB
+    this.mainMemory = { size: 65536, accessTime: 300 }; // Example size in KB
+    this.diskStorage = { size: 1024, accessTime: 10000 }; // Example size in GB
     this.hits = 0;
     this.misses = 0;
   }

@@ -106,7 +106,7 @@ const App = () => {
         let hitInRam = ram.access(address);
         if (hitInRam) {
           hits++;
-          results.push({ address, status: "hit(RAM)" });
+          results.push({ address, status: "hit(RAM)", level: "RAM" });
           levelHits[cacheLevels.length]++; // RAM is the next level after cache
           hitLevel = cacheLevels.length;
         } else {
@@ -153,8 +153,10 @@ const App = () => {
       formerAmat = amat;
     }
 
-    const ramMissRate = (levelAccesses[cacheLevels.length] - levelHits[cacheLevels.length]) / levelAccesses[cacheLevels.length];
-    amat = amat + (ramMissRate * memoryHierarchy.diskStorage.accessTime);
+    const ramMissRate =
+      (levelAccesses[cacheLevels.length] - levelHits[cacheLevels.length]) /
+      levelAccesses[cacheLevels.length];
+    amat = amat + ramMissRate * memoryHierarchy.diskStorage.accessTime;
 
     // Calculate hit rates for each level
     const hitRates = levelHits.map((hits, i) => ({
@@ -192,10 +194,9 @@ const App = () => {
             <BlockSize blockSize={blockSize} />
             {levelHitRates.length > 0 && (
               <div>
-                <h4>Cache Level Hit Rates:</h4>
                 {levelHitRates.map((rate, index) => (
                   <div key={index}>
-                    Level {rate.level}: {rate.hitRate.toFixed(2)}%
+                    <p className="b">Storage Level {rate.level}: {rate.hitRate.toFixed(2)}%</p>
                   </div>
                 ))}
               </div>

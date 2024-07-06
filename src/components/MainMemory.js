@@ -1,15 +1,11 @@
-import React from 'react';
+import React from "react";
 
-const MainMemory = ({ memoryHierarchy }) => {
-  if (!memoryHierarchy || !memoryHierarchy.mainMemory) {
-    return null;
-  }
-
+const MainMemory = ({ mainMemorySize }) => {
   return (
-    <div className="main-memory">
+    <div className="memory-level">
       <h2>Main Memory</h2>
-      <p>Size: {memoryHierarchy.mainMemory.size}</p>
-      <p>Access Time: {memoryHierarchy.mainMemory.accessTime}</p>
+      <div>Size: {mainMemorySize} KB</div>
+      <div>Access Time: 300 ns</div> {/* Example access time */}
     </div>
   );
 };

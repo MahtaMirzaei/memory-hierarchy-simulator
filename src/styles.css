@@ -28,7 +28,9 @@ select {
   background-color: #30451e;
   -webkit-border-radius: 1ex;
 }
-
+.b{
+  color: #89843B;
+}
 .f {
   display: flex;
   margin-top: 15px;
@@ -81,7 +83,7 @@ select {
 }
 
 .address-list {
-  max-height: 300px;
+  max-height: 335px;
   overflow-y: scroll;
   border: 1px solid #436029;  
   padding: 10px;

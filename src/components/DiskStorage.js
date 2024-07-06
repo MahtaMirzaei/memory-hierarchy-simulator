@@ -1,15 +1,11 @@
-import React from 'react';
+import React from "react";
 
-const DiskStorage = ({ memoryHierarchy }) => {
-  if (!memoryHierarchy || !memoryHierarchy.diskStorage) {
-    return null;
-  }
-
+const DiskStorage = ({ diskStorageSize }) => {
   return (
-    <div className="disk-storage">
+    <div className="memory-level">
       <h2>Disk Storage</h2>
-      <p>Size: {memoryHierarchy.diskStorage.size}</p>
-      <p>Access Time: {memoryHierarchy.diskStorage.accessTime}</p>
+      <div>Size: {diskStorageSize} GB</div>
+      <div>Access Time: 10000 ns</div> {/* Example access time */}
     </div>
   );
 };
