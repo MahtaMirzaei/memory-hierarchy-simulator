@@ -28,12 +28,15 @@ const App = () => {
   };
 
   const handleAddAddress = () => {
-    const addressValue = parseInt(currentAddress, 10);
-    if (!isNaN(addressValue) && addressValue >= 0 && addressValue < addressSize) {
-      setAddresses([...addresses, addressValue]);
-      setCurrentAddress('');
+    const addressArray = currentAddress.split(',')
+      .map(addr => parseInt(addr.trim(), 10))
+      .filter(addr => !isNaN(addr) && addr >= 0 && addr < addressSize);
+
+    if (addressArray.length === 0) {
+      alert('Please enter valid addresses between 0 and address size.');
     } else {
-      alert('Address must be between 0 and address size.');
+      setAddresses([...addresses, ...addressArray]);
+      setCurrentAddress('');
     }
   };
 
@@ -145,9 +148,9 @@ const App = () => {
             <MainMemory memoryHierarchy={memoryHierarchy} />
             <DiskStorage memoryHierarchy={memoryHierarchy} />
             <div>
-              <label>Enter Memory Address:</label>
-              <input type="number" value={currentAddress} onChange={handleAddressInput} />
-              <button onClick={handleAddAddress}>Add Address</button>
+              <label>Enter Memory Addresses (comma-separated):</label>
+              <input type="text" value={currentAddress} onChange={handleAddressInput} />
+              <button onClick={handleAddAddress}>Add Addresses</button>
             </div>
             <div>
               <button onClick={handleFinish}>Calculate Performance</button>
