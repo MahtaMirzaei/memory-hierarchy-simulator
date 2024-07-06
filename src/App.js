@@ -16,7 +16,7 @@ const App = () => {
   const [performance, setPerformance] = useState(null);
   const [addressResults, setAddressResults] = useState([]);
   const [blockSize, setBlockSize] = useState(8); // Default block size
-  const [addressSize, setAddressSize] = useState(1024); // Default address size
+  const [addressSize, setAddressSize] = useState(4096); // Default address size
   const [levelHitRates, setLevelHitRates] = useState([]); // State to store hit rates of each level
 
   const handleSimulate = (hierarchy) => {
