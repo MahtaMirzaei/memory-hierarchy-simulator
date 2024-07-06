@@ -1,0 +1,86 @@
+* {
+  background-color: #0c100e;
+  color: #436029;
+  border-color: #436029;
+  border-radius: 5px;
+}
+button {
+  color: #89c559;
+  color: #74965f;
+  background-color: #0f1d18;
+}
+h2 {
+  color: #e2e1ca;
+}
+select {
+  background-color: #0f1d18;
+}
+.f {
+  display: flex;
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+.app {
+  font-family: Arial, sans-serif;
+  margin: 20px;
+  display: grid;
+  justify-content: center;
+
+  margin-left: 80px;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.user-input {
+  margin-bottom: 20px;
+}
+
+.user-input h2 {
+  font-size: 1.5em;
+}
+
+.user-input label {
+  display: block;
+  margin: 10px 0;
+}
+
+.user-input select,
+.user-input input {
+  margin-left: 10px;
+  background-color: #0f1d18;
+  color: #89c559;
+}
+
+.user-input button {
+  display: block;
+  margin: 10px 0;
+}
+
+.performance-analysis {
+  margin-top: 20px;
+}
+
+.performance-analysis h2 {
+  font-size: 1.5em;
+}
+
+.address-list {
+  max-height: 300px;
+  overflow-y: scroll;
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-top: 10px;
+}
+
+.address-item {
+  padding: 5px;
+}
+
+.address-item.hit {
+  background-color: green;
+  color: white;
+}
+
+.address-item.miss {
+  background-color: red;
+  color: white;
+}
