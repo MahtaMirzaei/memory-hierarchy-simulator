@@ -142,9 +142,7 @@ const App = () => {
       const hitTime = cacheLevels[i].hitTime;
       const levelMisses = levelAccesses[i] - levelHitCount;
       const missPenalty =
-        i === cacheLevels.length - 1
-          ? memoryHierarchy.mainMemory.accessTime
-          : formerAmat;
+        i === cacheLevels.length - 1 ? cacheLevels[i].missPenalty : formerAmat;
 
       const missRate = levelMisses / levelAccesses[i];
 
@@ -152,11 +150,10 @@ const App = () => {
       amat = hitTime + missRate * missPenalty;
       formerAmat = amat;
     }
-
-    const ramMissRate =
-      (levelAccesses[cacheLevels.length] - levelHits[cacheLevels.length]) /
-      levelAccesses[cacheLevels.length];
-    amat = amat + ramMissRate * memoryHierarchy.diskStorage.accessTime;
+    const lastLevelMissRate = 1 - levelHits[cacheLevels.length - 1] / levelAccesses[cacheLevels.length - 1];
+    const ramHitRate =
+      levelHits[cacheLevels.length] / levelAccesses[cacheLevels.length];
+    amat = amat + lastLevelMissRate * (ramHitRate * 300 + (1 - ramHitRate) * 10000);
 
     // Calculate hit rates for each level
     const hitRates = levelHits.map((hits, i) => ({
@@ -196,7 +193,9 @@ const App = () => {
               <div>
                 {levelHitRates.map((rate, index) => (
                   <div key={index}>
-                    <p className="b">Storage Level {rate.level}: {rate.hitRate.toFixed(2)}%</p>
+                    <p className="b">
+                      Level {rate.level}: {rate.hitRate.toFixed(2)}%
+                    </p>
                   </div>
                 ))}
               </div>

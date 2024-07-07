@@ -3,7 +3,7 @@ import React from 'react';
 const BlockSize = ({ blockSize }) => {
   return (
     <div>
-      <h3>Block Size: {blockSize}</h3>
+      <h5>Block Size: {blockSize}</h5>
     </div>
   );
 };

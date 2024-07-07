@@ -38,7 +38,7 @@ const UserInput = ({
       cacheLevels,
       replacementPolicy,
       mainMemory: { size: 16384, accessTime: 3000 },
-      diskStorage: { size: 1048576, accessTime: 100000 },
+      diskStorage: { size: 1048576, accessTime: 10000 },
     };
     onSimulate(hierarchy);
   };
