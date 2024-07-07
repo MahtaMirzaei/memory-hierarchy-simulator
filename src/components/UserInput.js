@@ -8,9 +8,10 @@ const UserInput = ({
   addressSize,
 }) => {
   const [cacheLevels, setCacheLevels] = useState([
-    { size: 32, hitTime: 5, missPenalty: 40 },
+    { size: 32, hitTime: 5 }
   ]);
   const [replacementPolicy, setReplacementPolicy] = useState("LRU");
+
   const handleCacheLevelChange = (index, key, value) => {
     const updatedLevels = [...cacheLevels];
     updatedLevels[index][key] = parseInt(value, 10);
@@ -19,10 +20,7 @@ const UserInput = ({
 
   const handleAddCacheLevel = () => {
     if (cacheLevels.length < 3) {
-      setCacheLevels([
-        ...cacheLevels,
-        { size: 64, hitTime: 12, missPenalty: 170 },
-      ]);
+      setCacheLevels([...cacheLevels, { size: 64, hitTime: 12 }]);
     } else {
       alert("Maximum of 3 cache levels allowed.");
     }
@@ -37,7 +35,7 @@ const UserInput = ({
     const hierarchy = {
       cacheLevels,
       replacementPolicy,
-      mainMemory: { size: 16384, accessTime: 3000 },
+      mainMemory: { size: 16384, accessTime: 300 },
       diskStorage: { size: 1048576, accessTime: 10000 },
     };
     onSimulate(hierarchy);
@@ -52,9 +50,7 @@ const UserInput = ({
             Cache Level {index + 1} Size:
             <select
               value={level.size}
-              onChange={(e) =>
-                handleCacheLevelChange(index, "size", e.target.value)
-              }
+              onChange={(e) => handleCacheLevelChange(index, "size", e.target.value)}
             >
               <option value={4}>4</option>
               <option value={8}>8</option>
@@ -71,9 +67,7 @@ const UserInput = ({
             <input
               type="number"
               value={level.hitTime}
-              onChange={(e) =>
-                handleCacheLevelChange(index, "hitTime", e.target.value)
-              }
+              onChange={(e) => handleCacheLevelChange(index, "hitTime", e.target.value)}
             />
           </label>
           {cacheLevels.length > 1 && (
@@ -92,16 +86,16 @@ const UserInput = ({
           value={replacementPolicy}
           onChange={(e) => setReplacementPolicy(e.target.value)}
         >
-            <option value="">Select</option>
-            <option value="LRU">LRU</option>
-            <option value="FIFO">FIFO</option>
-            <option value="Random">Random</option>
-            <option value="LFU">LFU</option>
-            <option value="RAM">RAM</option>
-            <option value="RR">RR</option>
-            <option value="MFU">MFU</option>
-            <option value="LFRU">LFRU</option>
-            <option value="Second Chance">Second Chance</option>
+          <option value="">Select</option>
+          <option value="LRU">LRU</option>
+          <option value="FIFO">FIFO</option>
+          <option value="Random">Random</option>
+          <option value="LFU">LFU</option>
+          <option value="RAM">RAM</option>
+          <option value="RR">RR</option>
+          <option value="MFU">MFU</option>
+          <option value="LFRU">LFRU</option>
+          <option value="Second Chance">Second Chance</option>
         </select>
       </label>
       <label>
