@@ -141,7 +141,7 @@ const App = () => {
       const hitTime = cacheLevels[i].hitTime;
       const levelMisses = levelAccesses[i] - levelHitCount;
       const missPenalty =
-        i === cacheLevels.length - 1 ? cacheLevels[i].missPenalty : 300;
+        i === cacheLevels.length - 1 ? 300 : formerAmat;
 
       const missRate = levelMisses / levelAccesses[i];
 
