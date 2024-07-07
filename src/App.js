@@ -4,10 +4,21 @@ import Cache from "./components/Cache";
 import MainMemory from "./components/MainMemory";
 import DiskStorage from "./components/DiskStorage";
 import PerformanceAnalysis from "./components/PerformanceAnalysis";
-import { LRU, FIFO, RandomPolicy, LFU, RAM, RR, MFU, LFRU, SecondChance } from "./utils/policies";
+import {
+  LRU,
+  FIFO,
+  RandomPolicy,
+  LFU,
+  RAM,
+  RR,
+  MFU,
+  LFRU,
+  SecondChance,
+} from "./utils/policies";
 import "./styles.css";
 import AddressSize from "./components/AddressSize";
 import BlockSize from "./components/BlockSize";
+import ReplacementPolicy from "./components/ReplacementPolicy";
 
 const App = () => {
   const [memoryHierarchy, setMemoryHierarchy] = useState(null);
@@ -20,6 +31,7 @@ const App = () => {
   const [levelHitRates, setLevelHitRates] = useState([]); // State to store hit rates of each level
   const [mainMemorySize, setMainMemorySize] = useState(8192); // Default main memory size
   const [diskStorageSize, setDiskStorageSize] = useState(16384); // Default disk storage size
+  const [replacementPolicy, setReplacementPolicy] = useState("LRU");
 
   const handleSimulate = (hierarchy) => {
     setMemoryHierarchy(hierarchy);
@@ -27,6 +39,7 @@ const App = () => {
     setPerformance(null);
     setAddressResults([]);
     setLevelHitRates([]);
+    setReplacementPolicy(hierarchy.replacementPolicy); 
   };
 
   const handleAddressInput = (e) => {
@@ -66,20 +79,20 @@ const App = () => {
           break;
         case "LFU":
           cacheInstances.push(new LFU(cacheLevels[i].size));
-          case "RAM":
-            cacheInstances.push(new RAM(cacheLevels[i].size));
-            break;
-          case "RR":
-            cacheInstances.push(new RR(cacheLevels[i].size));
-            break;
-          case "MFU":
-            cacheInstances.push(new MFU(cacheLevels[i].size));
-            break;
-          case "LFRU":
-            cacheInstances.push(new LFRU(cacheLevels[i].size));
+        case "RAM":
+          cacheInstances.push(new RAM(cacheLevels[i].size));
           break;
-          case "Second Chance":
-            cacheInstances.push(new SecondChance(cacheLevels[i].size));
+        case "RR":
+          cacheInstances.push(new RR(cacheLevels[i].size));
+          break;
+        case "MFU":
+          cacheInstances.push(new MFU(cacheLevels[i].size));
+          break;
+        case "LFRU":
+          cacheInstances.push(new LFRU(cacheLevels[i].size));
+          break;
+        case "Second Chance":
+          cacheInstances.push(new SecondChance(cacheLevels[i].size));
           break;
         default:
           alert("Invalid replacement policy selected");
@@ -155,8 +168,7 @@ const App = () => {
       const levelHitCount = levelHits[i];
       const hitTime = cacheLevels[i].hitTime;
       const levelMisses = levelAccesses[i] - levelHitCount;
-      const missPenalty =
-        i === cacheLevels.length - 1 ? 300 : formerAmat;
+      const missPenalty = i === cacheLevels.length - 1 ? 300 : formerAmat;
 
       const missRate = levelMisses / levelAccesses[i];
 
@@ -200,14 +212,16 @@ const App = () => {
         <BlockSize blockSize={blockSize} />
         {performance && <PerformanceAnalysis performance={performance} />}
       </div>
+
       {memoryHierarchy && (
         <>
           <div>
+        <ReplacementPolicy replacementPolicy={replacementPolicy} />
             <Cache memoryHierarchy={memoryHierarchy} />
 
             {levelHitRates.length > 0 && (
               <div>
-                <h2>Each level access</h2>
+                <h3>Each level access</h3>
                 {levelHitRates.map((rate, index) => (
                   <div key={index}>
                     <p className="b">

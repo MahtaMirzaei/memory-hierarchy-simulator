@@ -3,7 +3,7 @@ import React from 'react';
 const AddressSize = ({ addressSize }) => {
   return (
     <div>
-      <h3>Addresss Size: {addressSize}</h3>
+      <h4>Addresss Size: {addressSize}</h4>
     </div>
   );
 };
