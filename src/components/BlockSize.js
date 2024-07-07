@@ -1,9 +1,10 @@
-import React from 'react';
+import React from "react";
 
 const BlockSize = ({ blockSize }) => {
   return (
     <div>
-      <h4>Block Size: {blockSize}</h4>
+      <h2>Block Size </h2>
+      <div> {blockSize}</div>
     </div>
   );
 };

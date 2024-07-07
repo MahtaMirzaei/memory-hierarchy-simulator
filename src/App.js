@@ -208,20 +208,20 @@ const App = () => {
           blockSize={blockSize}
           addressSize={addressSize}
         />
-        <AddressSize addressSize={addressSize} />
-        <BlockSize blockSize={blockSize} />
+
+        <ReplacementPolicy replacementPolicy={replacementPolicy} />
         {performance && <PerformanceAnalysis performance={performance} />}
       </div>
 
       {memoryHierarchy && (
         <>
           <div>
-        <ReplacementPolicy replacementPolicy={replacementPolicy} />
             <Cache memoryHierarchy={memoryHierarchy} />
-
+            <AddressSize addressSize={addressSize} />
+            <BlockSize blockSize={blockSize} />
             {levelHitRates.length > 0 && (
               <div>
-                <h3>Each level access</h3>
+                <h2>Each level access</h2>
                 {levelHitRates.map((rate, index) => (
                   <div key={index}>
                     <p className="b">
