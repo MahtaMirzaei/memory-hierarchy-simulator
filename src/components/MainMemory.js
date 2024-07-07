@@ -1,11 +1,11 @@
 import React from "react";
 
-const MainMemory = ({ mainMemorySize }) => {
+const MainMemory = ({ ramAccestime }) => {
   return (
     <div className="memory-level">
       <h2>Main Memory</h2>
-      <div>Size: {mainMemorySize} </div>
-      <div>Access Time: 300 ns</div> {/* Example access time */}
+      <div>Size: {8192} </div>
+      <div>Access Time: {ramAccestime} ns</div> {/* Example access time */}
     </div>
   );
 };

@@ -83,7 +83,7 @@ select {
 }
 
 .address-list {
-  max-height: 335px;
+  max-height: 250px;
   overflow-y: scroll;
   border: 1px solid #436029;  
   padding: 10px;

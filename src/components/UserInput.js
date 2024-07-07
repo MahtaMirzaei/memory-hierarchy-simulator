@@ -6,10 +6,12 @@ const UserInput = ({
   setAddressSize,
   blockSize,
   addressSize,
+  ramAccessTime,
+  setRamAccessTime,
+  diskAccessTime,
+  setDiskAccessTime,
 }) => {
-  const [cacheLevels, setCacheLevels] = useState([
-    { size: 32, hitTime: 5 }
-  ]);
+  const [cacheLevels, setCacheLevels] = useState([{ size: 16, hitTime: 5 }]);
   const [replacementPolicy, setReplacementPolicy] = useState("LRU");
 
   const handleCacheLevelChange = (index, key, value) => {
@@ -20,7 +22,7 @@ const UserInput = ({
 
   const handleAddCacheLevel = () => {
     if (cacheLevels.length < 3) {
-      setCacheLevels([...cacheLevels, { size: 64, hitTime: 12 }]);
+      setCacheLevels([...cacheLevels, { size: 32, hitTime: 20 }]);
     } else {
       alert("Maximum of 3 cache levels allowed.");
     }
@@ -35,8 +37,10 @@ const UserInput = ({
     const hierarchy = {
       cacheLevels,
       replacementPolicy,
-      mainMemory: { size: 16384, accessTime: 300 },
-      diskStorage: { size: 1048576, accessTime: 10000 },
+      mainMemory: { size: 16384 },
+      diskStorage: { size: 1048576 },
+      ramAccessTime,
+      diskAccessTime,
     };
     onSimulate(hierarchy);
   };
@@ -50,7 +54,9 @@ const UserInput = ({
             Cache Level {index + 1} Size:
             <select
               value={level.size}
-              onChange={(e) => handleCacheLevelChange(index, "size", e.target.value)}
+              onChange={(e) =>
+                handleCacheLevelChange(index, "size", e.target.value)
+              }
             >
               <option value={4}>4</option>
               <option value={8}>8</option>
@@ -67,7 +73,9 @@ const UserInput = ({
             <input
               type="number"
               value={level.hitTime}
-              onChange={(e) => handleCacheLevelChange(index, "hitTime", e.target.value)}
+              onChange={(e) =>
+                handleCacheLevelChange(index, "hitTime", e.target.value)
+              }
             />
           </label>
           {cacheLevels.length > 1 && (
@@ -80,6 +88,22 @@ const UserInput = ({
       {cacheLevels.length < 3 && (
         <button onClick={handleAddCacheLevel}>Add Cache Level</button>
       )}
+      <label>
+        Ram Hit Time (ns):
+        <input
+          type="number"
+          value={ramAccessTime}
+          onChange={(e) => setRamAccessTime(parseInt(e.target.value, 10))}
+        />
+      </label>
+      <label>
+        Disk Hit Time (ns):
+        <input
+          type="number"
+          value={diskAccessTime}
+          onChange={(e) => setDiskAccessTime(parseInt(e.target.value, 10))}
+        />
+      </label>
       <label>
         Replacement Policy:
         <select

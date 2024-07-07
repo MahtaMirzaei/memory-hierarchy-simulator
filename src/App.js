@@ -27,11 +27,13 @@ const App = () => {
   const [performance, setPerformance] = useState(null);
   const [addressResults, setAddressResults] = useState([]);
   const [blockSize, setBlockSize] = useState(8); // Default block size
-  const [addressSize, setAddressSize] = useState(4096); // Default address size
+  const [addressSize, setAddressSize] = useState(8192); // Default address size
   const [levelHitRates, setLevelHitRates] = useState([]); // State to store hit rates of each level
   const [mainMemorySize, setMainMemorySize] = useState(8192); // Default main memory size
   const [diskStorageSize, setDiskStorageSize] = useState(16384); // Default disk storage size
   const [replacementPolicy, setReplacementPolicy] = useState("LRU");
+  const [ramAccessTime, setRamAccessTime] = useState(300);
+  const [diskAccessTime, setDiskAccessTime] = useState(15000);
 
   const handleSimulate = (hierarchy) => {
     setMemoryHierarchy(hierarchy);
@@ -39,7 +41,9 @@ const App = () => {
     setPerformance(null);
     setAddressResults([]);
     setLevelHitRates([]);
-    setReplacementPolicy(hierarchy.replacementPolicy); 
+    setReplacementPolicy(hierarchy.replacementPolicy);
+    setRamAccessTime(hierarchy.ramAccessTime);
+    setDiskAccessTime(hierarchy.diskAccessTime);
   };
 
   const handleAddressInput = (e) => {
@@ -168,7 +172,8 @@ const App = () => {
       const levelHitCount = levelHits[i];
       const hitTime = cacheLevels[i].hitTime;
       const levelMisses = levelAccesses[i] - levelHitCount;
-      const missPenalty = i === cacheLevels.length - 1 ? 300 : formerAmat;
+      const missPenalty =
+        i === cacheLevels.length - 1 ? ramAccessTime : formerAmat;
 
       const missRate = levelMisses / levelAccesses[i];
 
@@ -182,7 +187,9 @@ const App = () => {
     const ramHitRate =
       levelHits[cacheLevels.length] / levelAccesses[cacheLevels.length];
     amat =
-      amat + lastLevelMissRate * (ramHitRate * 300 + (1 - ramHitRate) * 10000);
+      amat +
+      lastLevelMissRate *
+        (ramHitRate * ramAccessTime + (1 - ramHitRate) * diskAccessTime);
     // Calculate hit rates for each level
     const hitRates = levelHits.map((hits, i) => ({
       level: i + 1,
@@ -207,9 +214,12 @@ const App = () => {
           setAddressSize={setAddressSize}
           blockSize={blockSize}
           addressSize={addressSize}
+          ramAccessTime={ramAccessTime}
+          setRamAccessTime={setRamAccessTime}
+          diskAccessTime={diskAccessTime}
+          setDiskAccessTime={setDiskAccessTime}
         />
 
-        <ReplacementPolicy replacementPolicy={replacementPolicy} />
         {performance && <PerformanceAnalysis performance={performance} />}
       </div>
 
@@ -221,7 +231,7 @@ const App = () => {
             <BlockSize blockSize={blockSize} />
             {levelHitRates.length > 0 && (
               <div>
-                <h2>Each level access</h2>
+                <h3>Each level access</h3>
                 {levelHitRates.map((rate, index) => (
                   <div key={index}>
                     <p className="b">
@@ -233,8 +243,9 @@ const App = () => {
             )}
           </div>
           <div>
-            <MainMemory mainMemorySize={mainMemorySize} />
-            <DiskStorage diskStorageSize={diskStorageSize} />
+            <ReplacementPolicy replacementPolicy={replacementPolicy} />
+            <MainMemory ramAccestime={ramAccessTime} />
+            <DiskStorage diskAccessTime={diskAccessTime} />
             <div>
               <h4>Enter Memory Addresses (comma-separated):</h4>
               <input
