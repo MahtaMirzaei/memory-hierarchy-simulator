@@ -136,13 +136,12 @@ const App = () => {
 
     let amat = 0;
     let formerAmat = 0;
-
     for (let i = cacheLevels.length - 1; i >= 0; i--) {
       const levelHitCount = levelHits[i];
       const hitTime = cacheLevels[i].hitTime;
       const levelMisses = levelAccesses[i] - levelHitCount;
       const missPenalty =
-        i === cacheLevels.length - 1 ? cacheLevels[i].missPenalty : formerAmat;
+        i === cacheLevels.length - 1 ? cacheLevels[i].missPenalty : 300;
 
       const missRate = levelMisses / levelAccesses[i];
 
@@ -150,11 +149,13 @@ const App = () => {
       amat = hitTime + missRate * missPenalty;
       formerAmat = amat;
     }
-    const lastLevelMissRate = 1 - levelHits[cacheLevels.length - 1] / levelAccesses[cacheLevels.length - 1];
+    const lastLevelMissRate =
+      1 -
+      levelHits[cacheLevels.length - 1] / levelAccesses[cacheLevels.length - 1];
     const ramHitRate =
       levelHits[cacheLevels.length] / levelAccesses[cacheLevels.length];
-    amat = amat + lastLevelMissRate * (ramHitRate * 300 + (1 - ramHitRate) * 10000);
-
+    amat =
+      amat + lastLevelMissRate * (ramHitRate * 300 + (1 - ramHitRate) * 10000);
     // Calculate hit rates for each level
     const hitRates = levelHits.map((hits, i) => ({
       level: i + 1,
@@ -180,6 +181,8 @@ const App = () => {
           blockSize={blockSize}
           addressSize={addressSize}
         />
+        <AddressSize addressSize={addressSize} />
+        <BlockSize blockSize={blockSize} />
         {performance && <PerformanceAnalysis performance={performance} />}
       </div>
       {memoryHierarchy && (
@@ -187,10 +190,9 @@ const App = () => {
           <div>
             <Cache memoryHierarchy={memoryHierarchy} />
 
-            <AddressSize addressSize={addressSize} />
-            <BlockSize blockSize={blockSize} />
             {levelHitRates.length > 0 && (
               <div>
+                <h2>Each level access</h2>
                 {levelHitRates.map((rate, index) => (
                   <div key={index}>
                     <p className="b">

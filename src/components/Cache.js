@@ -9,7 +9,7 @@ const Cache = ({ memoryHierarchy }) => {
     <div className="cache">
       {memoryHierarchy.cacheLevels.map((level, index) => (
         <div key={index}>
-          <h3>Cache Level {index + 1}</h3>
+          <h2>Cache Level {index + 1}</h2>
           <p>Size: {level.size}</p>
           <p>Hit Time: {level.hitTime}</p>
           <p>Miss Penalty: {level.missPenalty}</p>

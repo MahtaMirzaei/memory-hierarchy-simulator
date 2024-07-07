@@ -76,16 +76,6 @@ const UserInput = ({
               }
             />
           </label>
-          <label>
-            Miss Penalty (ns):
-            <input
-              type="number"
-              value={level.missPenalty}
-              onChange={(e) =>
-                handleCacheLevelChange(index, "missPenalty", e.target.value)
-              }
-            />
-          </label>
           {cacheLevels.length > 1 && (
             <button onClick={() => handleRemoveCacheLevel(index)}>
               Remove Cache Level
