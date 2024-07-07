@@ -4,7 +4,7 @@ import Cache from "./components/Cache";
 import MainMemory from "./components/MainMemory";
 import DiskStorage from "./components/DiskStorage";
 import PerformanceAnalysis from "./components/PerformanceAnalysis";
-import { LRU, FIFO, RandomPolicy, LFU, RAM } from "./utils/policies";
+import { LRU, FIFO, RandomPolicy, LFU, RAM, RR, MFU, LFRU, SecondChance } from "./utils/policies";
 import "./styles.css";
 import AddressSize from "./components/AddressSize";
 import BlockSize from "./components/BlockSize";
@@ -66,8 +66,23 @@ const App = () => {
           break;
         case "LFU":
           cacheInstances.push(new LFU(cacheLevels[i].size));
+          case "RAM":
+            cacheInstances.push(new RAM(cacheLevels[i].size));
+            break;
+          case "RR":
+            cacheInstances.push(new RR(cacheLevels[i].size));
+            break;
+          case "MFU":
+            cacheInstances.push(new MFU(cacheLevels[i].size));
+            break;
+          case "LFRU":
+            cacheInstances.push(new LFRU(cacheLevels[i].size));
+          break;
+          case "Second Chance":
+            cacheInstances.push(new SecondChance(cacheLevels[i].size));
           break;
         default:
+          alert("Invalid replacement policy selected");
           return;
       }
     }

@@ -92,10 +92,16 @@ const UserInput = ({
           value={replacementPolicy}
           onChange={(e) => setReplacementPolicy(e.target.value)}
         >
-          <option value="LRU">LRU</option>
-          <option value="LFU">LFU</option>
-          <option value="FIFO">FIFO</option>
-          <option value="Random">Random</option>
+            <option value="">Select</option>
+            <option value="LRU">LRU</option>
+            <option value="FIFO">FIFO</option>
+            <option value="Random">Random</option>
+            <option value="LFU">LFU</option>
+            <option value="RAM">RAM</option>
+            <option value="RR">RR</option>
+            <option value="MFU">MFU</option>
+            <option value="LFRU">LFRU</option>
+            <option value="Second Chance">Second Chance</option>
         </select>
       </label>
       <label>
