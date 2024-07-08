@@ -129,32 +129,8 @@ export class RAM {
   }
 }
 
-export class RR {
-  constructor(size) {
-    this.size = size;
-    this.cache = new Set();
-    this.keys = [];
-    this.index = 0;
-  }
 
-  access(address) {
-    return this.cache.has(address);
-  }
 
-  addBlock(start, end) {
-    for (let addr = start; addr <= end; addr++) {
-      if (this.cache.size >= this.size) {
-        const replaceIndex = this.index % this.size;
-        this.cache.delete(this.keys[replaceIndex]);
-        this.keys[replaceIndex] = addr;
-        this.index++;
-      } else {
-        this.keys.push(addr);
-      }
-      this.cache.add(addr);
-    }
-  }
-}
 
 export class MFU {
   constructor(size) {

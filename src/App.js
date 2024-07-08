@@ -10,7 +10,6 @@ import {
   RandomPolicy,
   LFU,
   RAM,
-  RR,
   MFU,
   LFRU,
   SecondChance,
@@ -83,8 +82,6 @@ const App = () => {
           break;
         case "LFU":
           cacheInstances.push(new LFU(cacheLevels[i].size));
-        case "RAM":
-          cacheInstances.push(new RAM(cacheLevels[i].size));
           break;
         case "RR":
           cacheInstances.push(new RR(cacheLevels[i].size));

@@ -1,5 +1,13 @@
-import { LRU, FIFO, RandomPolicy, LFU } from "./policies";
-
+import {
+  LRU,
+  FIFO,
+  RandomPolicy,
+  LFU,
+  RAM,
+  MFU,
+  LFRU,
+  SecondChance,
+} from "./utils/policies";
 export class MemoryHierarchy {
   constructor({
     cacheSizes,
@@ -7,8 +15,8 @@ export class MemoryHierarchy {
     levels,
     blockSize,
     addressSize,
-    ramAccessTime, 
-    diskAccessTime
+    ramAccessTime,
+    diskAccessTime,
   }) {
     this.cacheSizes = cacheSizes;
     this.replacementPolicy = replacementPolicy;
@@ -16,8 +24,8 @@ export class MemoryHierarchy {
     this.blockSize = blockSize;
     this.addressSize = addressSize;
     this.caches = this.createCaches(levels, cacheSizes, replacementPolicy);
-    this.mainMemory = { size: 65536}; // Example size in KB
-    this.diskStorage = { size: 1024}; // Example size in GB
+    this.mainMemory = { size: 65536 }; // Example size in KB
+    this.diskStorage = { size: 1024 }; // Example size in GB
     this.hits = 0;
     this.misses = 0;
     this.ramAccessTime = 300;
@@ -41,6 +49,15 @@ export class MemoryHierarchy {
         case "LFU":
           cache = new LFU(sizes[i]);
           break;
+        case "MFU":
+          cache = new MFU(sizes[i]);
+          break;
+        case "LFRU":
+          cache = new LFRU(sizes[i]);
+          break;
+        case "Second Chance":
+          cache = new SecondChance(sizes[i]);
+          break;
         default:
           throw new Error("Unknown replacement policy");
       }
@@ -63,5 +80,4 @@ export class MemoryHierarchy {
       this.misses++;
     }
   }
-
 }
